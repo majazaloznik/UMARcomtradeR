@@ -14,7 +14,7 @@ chunk_data <- function(x, chunk_size) {
 
 #' Get reporter codes - countries in ISO format
 #'
-#' Helper function to get vector of valid reporter (or partner) codes using
+#' Helper function to get vector of valid reporter  codes using
 #' ISO3 which is what `comtradr` funcitons require.
 #'
 #' @return character vector of valid funs.
@@ -27,6 +27,24 @@ get_reporter_codes <- function(){
   reporter_codes |>
     dplyr::filter(iso_3 != "R4 ") |>
     dplyr::filter(iso_3 != "EUR") |>
+    dplyr::pull(iso_3)
+}
+
+
+#' Get partner codes - countries in ISO format
+#'
+#' Helper function to get vector of valid  partner codes using
+#' ISO3 which is what `comtradr` funcitons require.
+#'
+#' @return character vector of valid funs.
+#' @export
+get_partner_codes <- function(){
+  partner_codes <- comtradr:::ct_get_ref_table(dataset_id = 'partner',
+                                                update = FALSE,
+                                                verbose = FALSE)
+  # no idea why they are here, remove them
+  partner_codes |>
+    dplyr::filter(iso_3 != "World") |>
     dplyr::pull(iso_3)
 }
 
@@ -51,3 +69,6 @@ get_commodity_codes <- function(classification = "S4", level = 3){
     dplyr::filter(grepl(paste0("^[0-9]{",level,"}$"), id)) |>
     dplyr::pull(id)
 }
+
+get_commodity_codes("S4", 2)
+

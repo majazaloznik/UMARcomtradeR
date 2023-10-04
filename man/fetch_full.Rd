@@ -4,14 +4,21 @@
 \alias{fetch_full}
 \title{Fetch trade flows by partner country and commodity codes for single country}
 \usage{
-fetch_full(reporter = "SVN", start_date = "2011", end_date = "2022")
+fetch_full(
+  reporter = "SVN",
+  chunk,
+  start_date = "2011",
+  end_date = "2022",
+  cmd = "S4",
+  agg_l = 3
+)
 }
 \arguments{
+\item{reporter}{character value of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}}
+
 \item{start_date}{character value od start year}
 
 \item{end_date}{character value od end year}
-
-\item{repoerter}{character value of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}}
 }
 \value{
 fetched data or NULL

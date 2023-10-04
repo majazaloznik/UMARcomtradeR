@@ -4,7 +4,7 @@
 \alias{fetch_by_country}
 \title{Fetch trade flows by partner country}
 \usage{
-fetch_by_country(chunk, start_date = "2011", end_date = "2022")
+fetch_by_country(chunk, start_date = "2011", end_date = "2022", cmd = "S4")
 }
 \arguments{
 \item{chunk}{vector of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}}

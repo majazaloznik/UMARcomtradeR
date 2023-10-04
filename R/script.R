@@ -1,41 +1,159 @@
-# library(UMARcomtradeR)
-# # get reporter codes ie countries
-# reporter_codes <- get_reporter_codes()
-#
-# # get commodity codes level 3
-# commodity_codes <- get_commodity_codes()
-#
-#
-# comtradr:::check_reporterCode("R4 ")
-#
-# # split countries into chunks
-# chunks <- chunk_data(reporter_codes, 3)
-# # Use lapply with the retry function and concatenate results
-# results <- do.call(rbind, lapply(chunks, fetch_by_commodity))
-#
-# saveRDS(results, file = "reporter_by_world_S4_ag3.rds")
-#
-# x1 <- fetch_by_commodity(c("SVK"))
-# results <- rbind(results, x)
-# x2 <- fetch_by_commodity(c("SVN"))
-# results <- rbind(results, x2)
-# x3 <- fetch_by_commodity(c("SLB"))
-# results <- rbind(results, 3)
-#
-# x2 <- fetch_by_commodity(c("ZA1","ESP","LKA"))
-# results <- rbind(results, 2)
-#
-# # ct <- table(results$flowCode, results$cmdCode, results$reporterISO)
-# # sum(ct)
-#
-#
-# #
-# # chunks <- chunk_data(reporter_codes, 3)
-# # # Use lapply with the new function and concatenate results
-# # results_both <- do.call(rbind, lapply(chunks, fetch_by_country))
-# #
-# # # ct <- table(results_both$flowCode, results_both$partnerISO, results_both$reporterISO)
-# # # sum(ct)
-# #
-# #
-# # saveRDS(results_both, file = "reporter_by_partner_totals.rds")
+#' Scripting fun for fetch_by_commodity
+#'
+#'
+#'
+#' @param start_date start year
+#' @param end_date end year
+#' @param cmd classification type
+#' @param agg_l aggregation level
+#'
+#' @return dataframe with response
+#' @export
+reporter_by_world_w_cassifications <- function(start_date = '2011',
+                                               end_date = '2022',
+                                               cmd = "S4", agg_l = 3, chunks = NULL){
+  # split countries into chunks
+  if(is.null(chunks)) {
+  reporter_codes <- get_reporter_codes()
+  chunks <- chunk_data(reporter_codes, 3)}
+
+  results_list <- Map(fetch_by_commodity,
+                      chunk = chunks,
+                      start_date = start_date,
+                      end_date = end_date,
+                      cmd = cmd,
+                      agg_l = agg_l)
+
+  # Extract the data and failed chunks separately
+  data_list <- lapply(results_list, function(x) x$data)
+  failed_chunks <- sapply(results_list, function(x) x$failed_chunk)
+
+  # Only keep non-null data and rbind them
+  data_non_null <- data_list[sapply(data_list, function(x) !is.null(x))]
+  results <- do.call(rbind, data_non_null)
+
+  # Print the failed chunks
+  failed_chunks <- failed_chunks[!sapply(failed_chunks, is.null)]
+  if (length(failed_chunks) > 0) {
+    print(paste("Failed chunks:", paste(failed_chunks, collapse = ", ")))
+  }
+
+  if(!is.null(results)){
+    results <- results %>%
+      dplyr::select(period, reporterCode, reporterISO, reporterDesc,
+                    flowCode, flowDesc, partnerCode, partnerISO, partnerDesc,
+                    classificationCode, cmdCode, cmdDesc, aggrLevel,
+                    qtyUnitAbbr, qty, netWgt, grossWgt, primaryValue) |>
+      dplyr::distinct() }
+
+  # Return both results and failed chunks
+  list(data = results, failed_chunks = failed_chunks)
+}
+
+
+
+#' Scripting fun for fetch_full
+#'
+#' @param reporter singele country
+#' @param start_date start year
+#' @param end_date end year
+#' @param cmd classification type
+#' @param agg_l aggregation level
+#'
+#' @return dataframe with response
+#' @export
+full_single_country <- function(reporter = "SVN", start_date = '2011',
+                                end_date = '2022', cmd = "S4", agg_l = 3,
+                                partner_codes = NULL,
+                                chunk_size = 5){
+  # split countries into chunks
+  if(is.null(partner_codes)) partner_codes <- get_partner_codes()
+  chunks <- chunk_data(partner_codes, chunk_size)
+
+  # Use Map to collect both data and failed chunks
+  results_list <- Map(fetch_full,
+                      reporter = reporter,
+                      chunk = chunks,
+                      start_date = start_date,
+                      end_date = end_date,
+                      cmd = cmd,
+                      agg_l = agg_l)
+
+  # Extract the data and failed chunks separately
+  data_list <- lapply(results_list, function(x) x$data)
+  failed_chunks <- sapply(results_list, function(x) x$failed_chunk)
+
+  # Only keep non-null data and rbind them
+  data_non_null <- data_list[sapply(data_list, function(x) !is.null(x))]
+  results <- do.call(rbind, data_non_null)
+
+  # Print the failed chunks
+  failed_chunks <- failed_chunks[!sapply(failed_chunks, is.null)]
+  if (length(failed_chunks) > 0) {
+    print(paste("Failed chunks:", paste(failed_chunks, collapse = ", ")))
+  }
+
+  if(!is.null(results)){
+  results <- results %>%
+    dplyr::select(period, reporterCode, reporterISO, reporterDesc,
+                  flowCode, flowDesc, partnerCode, partnerISO, partnerDesc,
+                  classificationCode, cmdCode, cmdDesc, aggrLevel,
+                  qtyUnitAbbr, qty, netWgt, grossWgt, primaryValue) |>
+    dplyr::distinct()}
+
+  # Return both results and failed chunks
+  list(data = results, failed_chunks = failed_chunks)
+}
+
+
+
+#' Scripting fun for fetch_full
+#'
+#' @param reporter singele country
+#' @param start_date start year
+#' @param end_date end year
+#' @param cmd classification type
+#' @param agg_l aggregation level
+#'
+#' @return dataframe with response
+#' @export
+reporter_by_partner_total <- function(start_date = '2011',
+                                end_date = '2022', cmd = "S4",
+                                reporter_codes = NULL,
+                                chunk_size = 5){
+  # split countries into chunks
+  if(is.null(reporter_codes)) reporter_codes <- get_reporter_codes()
+  chunks <- chunk_data(reporter_codes, chunk_size)
+
+  # Use Map to collect both data and failed chunks
+  results_list <- Map(fetch_by_country,
+                      chunk = chunks,
+                      start_date = start_date,
+                      end_date = end_date,
+                      cmd = cmd)
+
+  # Extract the data and failed chunks separately
+  data_list <- lapply(results_list, function(x) x$data)
+  failed_chunks <- sapply(results_list, function(x) x$failed_chunk)
+
+  # Only keep non-null data and rbind them
+  data_non_null <- data_list[sapply(data_list, function(x) !is.null(x))]
+  results <- do.call(rbind, data_non_null)
+  results <- results |> dplyr::distinct()
+
+  # Print the failed chunks
+  failed_chunks <- failed_chunks[!sapply(failed_chunks, is.null)]
+  if (length(failed_chunks) > 0) {
+    print(paste("Failed chunks:", paste(failed_chunks, collapse = ", ")))
+  }
+
+  if(!is.null(results)){
+    results <- results %>%
+      dplyr::select(period, reporterCode, reporterISO, reporterDesc,
+                    flowCode, flowDesc, partnerCode, partnerISO, partnerDesc,
+                    classificationCode, cmdCode, cmdDesc, aggrLevel,
+                    qtyUnitAbbr, qty, netWgt, grossWgt, primaryValue) }
+
+  # Return both results and failed chunks
+  list(data = results, failed_chunks = failed_chunks)
+}
