@@ -16,6 +16,8 @@
 #' @param chunk vector of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}
 #' @param start_date character value od start year
 #' @param end_date character value od end year
+#' @param cmd commodity classification
+#' @param agg_l aggregation level
 #'
 #' @return fetched data or NULL
 #' @export
@@ -74,6 +76,7 @@ fetch_by_commodity <- function(chunk, start_date = '2011', end_date = '2022', cm
 #' @param chunk vector of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}
 #' @param start_date character value od start year
 #' @param end_date character value od end year
+#' @param cmd commodity classification
 #'
 #' @return fetched data or NULL
 #' @export
@@ -131,7 +134,10 @@ fetch_by_country <- function(chunk, start_date = '2011', end_date = '2022', cmd 
 #'
 #' @param reporter character value of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}
 #' @param start_date character value od start year
+#' @param chunk vector of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}
 #' @param end_date character value od end year
+#' @param cmd commodity classification
+#' @param agg_l aggregation level
 #'
 #' @return fetched data or NULL
 #' @export
@@ -192,6 +198,7 @@ fetch_full <- function(reporter = "SVN", chunk, start_date = '2011', end_date = 
 #' @param chunk vector of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}
 #' @param start_date character value od start year
 #' @param end_date character value od end year
+#' @param cmd commodity classification
 #'
 #' @return fetched data or NULL
 #' @export

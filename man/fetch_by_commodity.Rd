@@ -18,6 +18,10 @@ fetch_by_commodity(
 \item{start_date}{character value od start year}
 
 \item{end_date}{character value od end year}
+
+\item{cmd}{commodity classification}
+
+\item{agg_l}{aggregation level}
 }
 \value{
 fetched data or NULL

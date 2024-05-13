@@ -24,6 +24,10 @@ full_single_country(
 \item{cmd}{classification type}
 
 \item{agg_l}{aggregation level}
+
+\item{partner_codes}{char vector, probably from \link[UMARcomtradeR]{get_partner_codes}}
+
+\item{chunk_size}{numeric}
 }
 \value{
 dataframe with response

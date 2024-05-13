@@ -16,9 +16,15 @@ fetch_full(
 \arguments{
 \item{reporter}{character value of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}}
 
+\item{chunk}{vector of valid reporter codes you can get from \link[UMARcomtradeR]{get_reporter_codes}}
+
 \item{start_date}{character value od start year}
 
 \item{end_date}{character value od end year}
+
+\item{cmd}{commodity classification}
+
+\item{agg_l}{aggregation level}
 }
 \value{
 fetched data or NULL

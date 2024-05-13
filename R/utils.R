@@ -70,5 +70,3 @@ get_commodity_codes <- function(classification = "S4", level = 3){
     dplyr::pull(id)
 }
 
-get_commodity_codes("S4", 2)
-

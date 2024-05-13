@@ -17,6 +17,8 @@ fetch_by_country_world(
 \item{start_date}{character value od start year}
 
 \item{end_date}{character value od end year}
+
+\item{cmd}{commodity classification}
 }
 \value{
 fetched data or NULL

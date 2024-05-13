@@ -1,15 +1,17 @@
 Package: UMARcomtradeR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Helper functions for getting stuff off comtrade
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: mz
+Maintainer: The package maintainer <maja.zaloznik@gmail.com>
+Description: This is a poorly documented package not meant for wider use..
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports: 
     comtradr,
-    dplyr
+    dplyr,
+    cli,
+    poorman,
+    rlang

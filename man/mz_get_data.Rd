@@ -16,7 +16,7 @@ mz_get_data(
   end_date = NULL,
   process = TRUE,
   verbose = FALSE,
-  primary_token = comtradr:::get_primary_comtrade_key(),
+  primary_token = comtradr::get_primary_comtrade_key(),
   mode_of_transport = "0",
   partner_2 = "World",
   customs_code = "C00",
@@ -58,6 +58,9 @@ mz_get_data(
 \item{update}{A logical value. If TRUE, will download the possibly updated reference tables from the UN.}
 
 \item{...}{You can pass in further parameters to the API that will not be checked and passed on as query parameters as is.}
+}
+\value{
+response from comtrade
 }
 \description{
 Replacement for ct_get_data

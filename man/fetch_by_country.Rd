@@ -12,6 +12,8 @@ fetch_by_country(chunk, start_date = "2011", end_date = "2022", cmd = "S4")
 \item{start_date}{character value od start year}
 
 \item{end_date}{character value od end year}
+
+\item{cmd}{commodity classification}
 }
 \value{
 fetched data or NULL

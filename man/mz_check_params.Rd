@@ -53,6 +53,9 @@ mz_check_params(
 
 \item{...}{You can pass in further parameters to the API that will not be checked and passed on as query parameters as is.}
 }
+\value{
+list of parameters
+}
 \description{
 Replacememnt for ct_check_params
 }

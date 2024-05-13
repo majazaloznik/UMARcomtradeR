@@ -6,6 +6,8 @@
 #' @param end_date end year
 #' @param cmd classification type
 #' @param agg_l aggregation level
+#' @param chunks list of vectors of valid reporter codes you can get from
+#' \link[UMARcomtradeR]{get_reporter_codes}
 #'
 #' @return dataframe with response
 #' @export
@@ -59,6 +61,8 @@ reporter_by_world_w_cassifications <- function(start_date = '2011',
 #' @param end_date end year
 #' @param cmd classification type
 #' @param agg_l aggregation level
+#' @param partner_codes char vector, probably from \link[UMARcomtradeR]{get_partner_codes}
+#' @param chunk_size numeric
 #'
 #' @return dataframe with response
 #' @export
@@ -109,11 +113,11 @@ full_single_country <- function(reporter = "SVN", start_date = '2011',
 
 #' Scripting fun for fetch_full
 #'
-#' @param reporter singele country
+#' @param reporter_codes char vector, probably from \link[UMARcomtradeR]{get_reporter_codes}
 #' @param start_date start year
 #' @param end_date end year
 #' @param cmd classification type
-#' @param agg_l aggregation level
+#' @param chunk_size defaults to 5
 #'
 #' @return dataframe with response
 #' @export
@@ -157,3 +161,6 @@ reporter_by_partner_total <- function(start_date = '2011',
   # Return both results and failed chunks
   list(data = results, failed_chunks = failed_chunks)
 }
+
+
+

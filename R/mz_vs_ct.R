@@ -15,7 +15,7 @@ mz_check_partnerCode <- function (partner, update = FALSE, verbose = FALSE)
   else {
     rlang::abort("You need to provide at least one partner.")
   }
-  partner_codes <- comtradr:::ct_get_ref_table(dataset_id = "partner",
+  partner_codes <- comtradr::ct_get_ref_table(dataset_id = "partner",
                                     update = update, verbose = verbose)
   if (length(partner) > 1 | !any(partner == "all")) {
     partner <- substr(partner, 1,3)
@@ -57,7 +57,7 @@ mz_check_partnerCode <- function (partner, update = FALSE, verbose = FALSE)
 #' @param partner_2 This value is set as a default to `0`, which is most likely the most general value and also the default on the Comtrade website.
 #' @param customs_code The customs code is set to the default of `C00` which is the default for TOTAL across all customs procedures.
 #'
-#' @return
+#' @return list of parameters
 #' @export
 
 mz_check_params <- function (type, frequency, commodity_classification, commodity_code,
@@ -142,12 +142,12 @@ mz_check_params <- function (type, frequency, commodity_classification, commodit
 #' @param mode_of_transport The Mode of Transport is set to `0`, which is the default for TOTAL across all modes of transportation.
 #' @param partner_2 This value is set as a default to `0`, which is most likely the most general value and also the default on the Comtrade website.
 #' @param customs_code The customs code is set to the default of `C00` which is the default for TOTAL across all customs procedures.
-#' @return
+#' @return response from comtrade
 #' @export
 mz_get_data <- function (type = "goods", frequency = "A", commodity_classification = "HS",
                          commodity_code = "TOTAL", flow_direction = "all",
                          reporter = "all", partner = "World", start_date = NULL,
-                         end_date = NULL, process = TRUE, verbose = FALSE, primary_token = comtradr:::get_primary_comtrade_key(),
+                         end_date = NULL, process = TRUE, verbose = FALSE, primary_token = comtradr::get_primary_comtrade_key(),
                          mode_of_transport = "0", partner_2 = "World",
                          customs_code = "C00", update = FALSE, ...) {
   params <- mz_check_params(type = type, frequency = frequency,

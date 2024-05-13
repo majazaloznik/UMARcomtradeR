@@ -20,6 +20,9 @@ reporter_by_world_w_cassifications(
 \item{cmd}{classification type}
 
 \item{agg_l}{aggregation level}
+
+\item{chunks}{list of vectors of valid reporter codes you can get from
+\link[UMARcomtradeR]{get_reporter_codes}}
 }
 \value{
 dataframe with response

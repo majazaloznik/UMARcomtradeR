@@ -19,9 +19,9 @@ reporter_by_partner_total(
 
 \item{cmd}{classification type}
 
-\item{reporter}{singele country}
+\item{reporter_codes}{char vector, probably from \link[UMARcomtradeR]{get_reporter_codes}}
 
-\item{agg_l}{aggregation level}
+\item{chunk_size}{defaults to 5}
 }
 \value{
 dataframe with response
