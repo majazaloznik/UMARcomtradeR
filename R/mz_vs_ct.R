@@ -77,7 +77,7 @@ mz_check_params <- function (type, frequency, commodity_classification, commodit
   if (verbose) {
     cli::cli_inform(c(v = "Checked validity of commodity_classification."))
   }
-  flow_direction <- comtradr:::check_flowCode(flow_direction)
+  flow_direction <- comtradr:::check_flowCode(flow_direction, update)
   if (verbose) {
     cli::cli_inform(c(v = "Checked validity of flow_direction."))
   }
@@ -139,7 +139,7 @@ mz_check_params <- function (type, frequency, commodity_classification, commodit
 #' @param verbose A logical value. If TRUE, sends status updates to the console. If FALSE, runs functions quietly.
 #' @param update A logical value. If TRUE, will download the possibly updated reference tables from the UN.
 #' @param ... You can pass in further parameters to the API that will not be checked and passed on as query parameters as is.
-#' @param mode_of_transport The Mode of Transport is set to `0`, which is the default for TOTAL across all modes of transportation.
+#' @param mode_of_transport The Mode of Transport is set to `TOTAL modes of transport`
 #' @param partner_2 This value is set as a default to `0`, which is most likely the most general value and also the default on the Comtrade website.
 #' @param customs_code The customs code is set to the default of `C00` which is the default for TOTAL across all customs procedures.
 #' @return response from comtrade
@@ -148,7 +148,7 @@ mz_get_data <- function (type = "goods", frequency = "A", commodity_classificati
                          commodity_code = "TOTAL", flow_direction = "all",
                          reporter = "all", partner = "World", start_date = NULL,
                          end_date = NULL, process = TRUE, verbose = FALSE, primary_token = comtradr::get_primary_comtrade_key(),
-                         mode_of_transport = "0", partner_2 = "World",
+                         mode_of_transport = "TOTAL modes of transport", partner_2 = "World",
                          customs_code = "C00", update = FALSE, ...) {
   params <- mz_check_params(type = type, frequency = frequency,
                             commodity_classification = commodity_classification,
@@ -158,9 +158,9 @@ mz_get_data <- function (type = "goods", frequency = "A", commodity_classificati
                             partner_2 = partner_2, customs_code = customs_code, includeDesc = "TRUE",
                             update = update, ...)
   req <- comtradr:::ct_build_request(params, verbose = verbose, primary_token = primary_token)
-  resp <- comtradr:::ct_perform_request(req, verbose = verbose)
+  resp <- comtradr:::ct_perform_request(req, requests_per_second = 10/60, verbose = verbose)
   if (process) {
-    result <- comtradr:::ct_process_response(resp, verbose = verbose)
+    result <- comtradr:::ct_process_response(resp, verbose = verbose, tidy_cols = TRUE)
     return(result)
   }
   else {
