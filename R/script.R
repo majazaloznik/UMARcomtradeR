@@ -1,6 +1,5 @@
 #' Scripting fun for fetch_by_commodity
-#'
-#'
+
 #'
 #' @param start_date start year
 #' @param end_date end year
@@ -42,10 +41,10 @@ reporter_by_world_w_cassifications <- function(start_date = '2011',
 
   if(!is.null(results)){
     results <- results %>%
-      dplyr::select(period, reporterCode, reporterISO, reporterDesc,
-                    flowCode, flowDesc, partnerCode, partnerISO, partnerDesc,
-                    classificationCode, cmdCode, cmdDesc, aggrLevel,
-                    qtyUnitAbbr, qty, netWgt, grossWgt, primaryValue) |>
+      dplyr::select(period, reporter_code, reporter_iso, reporter_desc,
+                    flow_code, flow_desc, partner_code, partner_iso, partner_desc,
+                    classification_code, cmd_code, cmd_desc, aggr_level,
+                    qty_unit_abbr, qty, net_wgt, gross_wgt, primary_value) |>
       dplyr::distinct() }
 
   # Return both results and failed chunks
@@ -99,10 +98,10 @@ full_single_country <- function(reporter = "SVN", start_date = '2011',
 
   if(!is.null(results)){
   results <- results %>%
-    dplyr::select(period, reporterCode, reporterISO, reporterDesc,
-                  flowCode, flowDesc, partnerCode, partnerISO, partnerDesc,
-                  classificationCode, cmdCode, cmdDesc, aggrLevel,
-                  qtyUnitAbbr, qty, netWgt, grossWgt, primaryValue) |>
+    dplyr::select(period, reporter_code, reporter_iso, reporter_desc,
+                  flow_code, flow_desc, partner_code, partner_iso, partner_desc,
+                  classification_code, cmd_code, cmd_desc, aggr_level,
+                  qty_unit_abbr, qty, net_wgt, gross_wgt, primary_value) |>
     dplyr::distinct()}
 
   # Return both results and failed chunks
@@ -153,10 +152,10 @@ reporter_by_partner_total <- function(start_date = '2011',
 
   if(!is.null(results)){
     results <- results %>%
-      dplyr::select(period, reporterCode, reporterISO, reporterDesc,
-                    flowCode, flowDesc, partnerCode, partnerISO, partnerDesc,
-                    classificationCode, cmdCode, cmdDesc, aggrLevel,
-                    qtyUnitAbbr, qty, netWgt, grossWgt, primaryValue) }
+      dplyr::select(period, reporter_code, reporter_iso, reporter_desc,
+                    flow_code, flow_desc, partner_code, partner_iso, partner_desc,
+                    classification_code, cmd_code, cmd_desc, aggr_level,
+                    qty_unit_abbr, qty, net_wgt, gross_wgt, primary_value) }
 
   # Return both results and failed chunks
   list(data = results, failed_chunks = failed_chunks)
