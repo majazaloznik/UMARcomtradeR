@@ -17,7 +17,7 @@ mz_get_data(
   process = TRUE,
   verbose = FALSE,
   primary_token = comtradr::get_primary_comtrade_key(),
-  mode_of_transport = "0",
+  mode_of_transport = "TOTAL modes of transport",
   partner_2 = "World",
   customs_code = "C00",
   update = FALSE,
@@ -49,7 +49,7 @@ mz_get_data(
 
 \item{primary_token}{Your primary UN Comtrade API token. A character value. Default is to check in environment for stored token, if not passed through the `comtradr::set_primary_comtrade_key` function.}
 
-\item{mode_of_transport}{The Mode of Transport is set to `0`, which is the default for TOTAL across all modes of transportation.}
+\item{mode_of_transport}{The Mode of Transport is set to `TOTAL modes of transport`}
 
 \item{partner_2}{This value is set as a default to `0`, which is most likely the most general value and also the default on the Comtrade website.}
 

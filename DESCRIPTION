@@ -10,7 +10,7 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
 Imports: 
-    comtradr,
+    comtradr (== 0.4.0.0),
     dplyr,
     cli,
     poorman,
