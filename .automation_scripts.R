@@ -1,16 +1,22 @@
 library(dplyr)
+library(UMARcomtradR)
+Sys.setenv(http_proxy = "http://proxy.gov.si:80")
+Sys.setenv(http_proxy_user = "http://proxy.gov.si:80")
+Sys.setenv(https_proxy = "http://proxy.gov.si:80")
+Sys.setenv(https_proxy_user = "http://proxy.gov.si:80")
 path <- "\\\\192.168.38.7\\public$\\Avtomatizacija\\comtrade\\"
 
 # scrpt for SLovenia full
-slovenia_full_11_22_ag1 <- full_single_country(reporter = "SVN", start_date = '2011', end_date = '2022', cmd = "S4", agg_l = 1)
+slovenia_full_23_ag1 <- full_single_country(reporter = "SVN", start_date = '2023', end_date = '2023', cmd = "S4", agg_l = 1)
 
-# missing_11_22_ag1 <- unlist(slovenia_full_11_22_ag1$failed_chunks)
+# missing_11_22_ag1 <- unlist(slovenia_full_23_ag1$failed_chunks)
 # slovenia_full_missing_11_22_ag1 <- full_single_country(reporter = "SVN", start_date = '2011', end_date = '2022', cmd = "S4", agg_l = 1,
 #                                                        partner_codes =  missing_11_22_ag1, chunk_size = 1)
 # slovenia_full_11_22_ag1 <- rbind(slovenia_full_11_22_ag1$data,
 #                                  slovenia_full_missing_11_22_ag1$data)
 
-slovenia_full_11_22_ag1 <- slovenia_full_11_22_ag1$data
+slovenia_full_23_ag1 <- slovenia_full_23_ag1$data
+saveRDS(slovenia_full_23_ag1, paste0(path, "slovenia_full_23_ag1.rds"))
 
 slovenia_full_11_22_ag2 <- full_single_country(reporter = "SVN", start_date = '2011', end_date = '2022', cmd = "S4", agg_l = 2)
 slovenia_full_11_22_ag2 <- slovenia_full_11_22_ag2$data
@@ -51,33 +57,84 @@ reporter_by_partner_total_00_10 <- reporter_by_partner_total(start_date = '2000'
 reporter_by_partner_total_11_22 <- reporter_by_partner_total(start_date = '2011',
                                                              end_date = '2022', cmd = "SS",
                                                              chunk_size = 5)
+
+reporter_by_partner_total_23_23 <- reporter_by_partner_total(start_date = '2023',
+                                                             end_date = '2023', cmd = "SS",
+                                                             chunk_size = 5)
 reporter_by_partner_total_00_10$failed_chunks
 reporter_by_partner_total_11_22$failed_chunks
+reporter_by_partner_total_23_23$failed_chunks
 
 reporter_by_partner_total_00_10 <- reporter_by_partner_total_00_10$data
 reporter_by_partner_total_11_22 <- reporter_by_partner_total_11_22$data
-reporter_by_partner_total_00_22 <- rbind(reporter_by_partner_total_00_10,
-                                         reporter_by_partner_total_11_22)|>
-  dplyr::arrange(period, reporterDesc, partnerDesc, flowDesc)
+reporter_by_partner_total_23_23 <- reporter_by_partner_total_23_23$data
 
-saveRDS(reporter_by_partner_total_00_22, paste0(path, "reporter_by_partner_total_00_22.rds"))
+reporter_by_partner_total_00_23 <- rbind(reporter_by_partner_total_00_10,
+                                         reporter_by_partner_total_11_22,
+                                         reporter_by_partner_total_23_23)|>
+  dplyr::arrange(period, reporter_desc, partner_desc, flow_desc)
+
+saveRDS(reporter_by_partner_total_00_23, paste0(path, "reporter_by_partner_total_00_23.rds"))
 
 
 # reporter by world ag3 and ag2
+reporter_by_world_ag2_00_10  <- reporter_by_world_w_cassifications(start_date = "2000",
+                                                                   end_date = "2010",
+                                                                   cmd = "SS",
+                                                                   agg_l = 2,
+                                                                   chunks = NULL)
+reporter_by_world_ag2_11_22  <- reporter_by_world_w_cassifications(start_date = "2011",
+                                                                   end_date = "2022",
+                                                                   cmd = "SS",
+                                                                   agg_l = 2,
+                                                                   chunks = NULL)
+
+reporter_by_world_ag2_23_23  <- reporter_by_world_w_cassifications(start_date = "2023",
+                                                                   end_date = "2023",
+                                                                   cmd = "SS",
+                                                                   agg_l = 2,
+                                                                   chunks = NULL)
+
+reporter_by_world_ag3_00_10  <- reporter_by_world_w_cassifications(start_date = "2000",
+                                                                   end_date = "2010",
+                                                                   cmd = "SS",
+                                                                   agg_l = 3,
+                                                                   chunks = NULL)
+reporter_by_world_ag3_11_22  <- reporter_by_world_w_cassifications(start_date = "2011",
+                                                                   end_date = "2022",
+                                                                   cmd = "SS",
+                                                                   agg_l = 3,
+                                                                   chunks = NULL)
+reporter_by_world_ag3_23_23  <- reporter_by_world_w_cassifications(start_date = "2023",
+                                                                   end_date = "2023",
+                                                                   cmd = "SS",
+                                                                   agg_l = 3,
+                                                                   chunks = NULL)
+
 reporter_by_world_ag2_00_10$failed_chunks
 reporter_by_world_ag2_11_22$failed_chunks
+reporter_by_world_ag2_23_23$failed_chunks
 reporter_by_world_ag3_00_10$failed_chunks
 reporter_by_world_ag3_11_22$failed_chunks
+reporter_by_world_ag3_23_23$failed_chunks
 
 reporter_by_world_ag2_00_10 <- reporter_by_world_ag2_00_10$data
 reporter_by_world_ag2_11_22 <- reporter_by_world_ag2_11_22$data
+reporter_by_world_ag2_23_23 <- reporter_by_world_ag2_23_23$data
+
 reporter_by_world_ag3_00_10 <- reporter_by_world_ag3_00_10$data
 reporter_by_world_ag3_11_22 <- reporter_by_world_ag3_11_22$data
+reporter_by_world_ag3_11_22_plus <- reporter_by_world_ag3_11_22_plus$data
+reporter_by_world_ag3_23_23 <- reporter_by_world_ag3_23_23$data
 
-
-reporter_by_world_ag2_ag3_00_22 <- rbind(reporter_by_world_ag2_00_10,
+reporter_by_world_ag2_ag3_00_23 <- rbind(reporter_by_world_ag2_00_10,
                                          reporter_by_world_ag2_11_22,
+                                         reporter_by_world_ag2_11_22_plus,
+                                         reporter_by_world_ag2_23_23,
                                          reporter_by_world_ag3_00_10,
+                                         reporter_by_world_ag3_11_22,
+                                         reporter_by_world_ag3_11_22_plus,
                                          reporter_by_world_ag3_11_22)
 
-saveRDS(reporter_by_world_ag2_ag3_00_22, paste0(path, "reporter_by_world_ag2_ag3_00_22.rds"))
+saveRDS(reporter_by_world_ag2_ag3_00_23, paste0(path, "reporter_by_world_ag2_ag3_00_23.rds"))
+

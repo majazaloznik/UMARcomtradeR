@@ -66,62 +66,49 @@ mz_check_params <- function (type, frequency, commodity_classification, commodit
                              ...)
 {
   type <- comtradr:::check_type(type)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of type."))
-  }
+  if (verbose) cli::cli_inform(c(v = "Checked validity of type."))
+
   frequency <- comtradr:::check_freq(type, frequency)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of frequency."))
-  }
-  commodity_classification <- comtradr:::check_clCode(type, commodity_classification)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of commodity_classification."))
-  }
-  flow_direction <- comtradr:::check_flowCode(flow_direction, update)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of flow_direction."))
-  }
-  commodity_code <- comtradr:::check_cmdCode(commodity_classification,
-                                             commodity_code, update = update, verbose = verbose)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of commodity_code."))
-  }
-  reporter <- comtradr:::check_reporterCode(reporter, update = update,
-                                            verbose = verbose)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of reporter."))
-  }
+  if (verbose) cli::cli_inform(c(v = "Checked validity of frequency."))
+
+  commodity_classification <- comtradr:::check_clCode(type, commodity_classification, bulk = FALSE)
+  if (verbose) cli::cli_inform(c(v = "Checked validity of commodity_classification."))
+
+  flow_direction <- comtradr:::check_flowCode(flow_direction, update, verbose)
+  if (verbose) cli::cli_inform(c(v = "Checked validity of flow_direction."))
+
+  commodity_code <- comtradr:::check_cmdCode(commodity_classification, commodity_code,
+                                             update = update, verbose = verbose)
+  if (verbose) cli::cli_inform(c(v = "Checked validity of commodity_code."))
+
+  reporter <- comtradr:::check_reporterCode(reporter, update = update, verbose = verbose)
+  if (verbose) cli::cli_inform(c(v = "Checked validity of reporter."))
+
   partner <- mz_check_partnerCode(partner, update = update, verbose = verbose)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of partner."))
-  }
-  partner_2 <- comtradr:::check_partner2Code(partner_2, update = update,
-                                             verbose = verbose)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of partner_2."))
-  }
-  mode_of_transport <- comtradr:::check_motCode(mode_of_transport, update = update,
-                                                verbose = verbose)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of mode_of_transport."))
-  }
-  customs_code <- comtradr:::check_customsCode(customs_code, update = update,
-                                               verbose = verbose)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of customs_code."))
-  }
-  period <- comtradr:::check_date(start_date, end_date, frequency)
-  if (verbose) {
-    cli::cli_inform(c(v = "Checked validity of start and end dates."))
-  }
-  params <- list(query_params = list(cmdCode = commodity_code,
-                                     flowCode = flow_direction, partnerCode = partner, reporterCode = reporter,
-                                     period = period, motCode = mode_of_transport, partner2Code = partner_2,
-                                     customsCode = customs_code, ...), url_params = list(type = type,
-                                                                                         freq = frequency, clCode = commodity_classification))
+  if (verbose) cli::cli_inform(c(v = "Checked validity of partner."))
+
+  partner_2 <- comtradr:::check_partner2Code(partner_2, update = update, verbose = verbose)
+  if (verbose) cli::cli_inform(c(v = "Checked validity of partner_2."))
+
+  mode_of_transport <- comtradr:::check_motCode(mode_of_transport, update = update, verbose = verbose)
+  if (verbose) cli::cli_inform(c(v = "Checked validity of mode_of_transport."))
+
+  customs_code <- comtradr:::check_customsCode(customs_code, update = update, verbose = verbose)
+  if (verbose) cli::cli_inform(c(v = "Checked validity of customs_code."))
+
+  period <- comtradr:::check_date(start_date, end_date, frequency, bulk = FALSE)
+  if (verbose) cli::cli_inform(c(v = "Checked validity of start and end dates."))
+
+  params <- list(
+    query_params = list(
+      cmdCode = commodity_code, flowCode = flow_direction, partnerCode = partner,
+      reporterCode = reporter, period = period, motCode = mode_of_transport,
+      partner2Code = partner_2, customsCode = customs_code, ...
+    ),
+    url_params = list(type = type, freq = frequency, clCode = commodity_classification)
+  )
   return(params)
 }
-
 
 #' Replacement for ct_get_data
 #'
@@ -147,7 +134,8 @@ mz_check_params <- function (type, frequency, commodity_classification, commodit
 mz_get_data <- function (type = "goods", frequency = "A", commodity_classification = "HS",
                          commodity_code = "TOTAL", flow_direction = "all",
                          reporter = "all", partner = "World", start_date = NULL,
-                         end_date = NULL, process = TRUE, verbose = FALSE, primary_token = comtradr::get_primary_comtrade_key(),
+                         end_date = NULL, process = TRUE, verbose = FALSE,
+                         primary_token = comtradr::get_primary_comtrade_key(),
                          mode_of_transport = "TOTAL modes of transport", partner_2 = "World",
                          customs_code = "C00", update = FALSE, ...) {
   params <- mz_check_params(type = type, frequency = frequency,
@@ -157,13 +145,29 @@ mz_get_data <- function (type = "goods", frequency = "A", commodity_classificati
                             end_date = end_date, verbose = verbose, mode_of_transport = mode_of_transport,
                             partner_2 = partner_2, customs_code = customs_code, includeDesc = "TRUE",
                             update = update, ...)
-  req <- comtradr:::ct_build_request(params, verbose = verbose, primary_token = primary_token)
-  resp <- comtradr:::ct_perform_request(req, requests_per_second = 10/60, verbose = verbose)
-  if (process) {
-    result <- comtradr:::ct_process_response(resp, verbose = verbose, tidy_cols = TRUE)
-    return(result)
-  }
-  else {
-    return(resp)
-  }
+
+  # comtradr rejects URLs over ~2000 chars (HTTP 414); split long
+  # partner/reporter code lists into multiple requests, combine after
+  params_list <- comtradr:::ct_split_params(params, primary_token = primary_token)
+
+  reqs <- purrr::map(params_list, comtradr:::ct_build_request,
+                     verbose = verbose, primary_token = primary_token, bulk = FALSE)
+
+  resps <- purrr::map(reqs, comtradr:::ct_perform_request,
+                      requests_per_second = 10 / 60, verbose = verbose, bulk = FALSE)
+
+  if (!process) return(resps[[1]])
+
+  results <- purrr::map(resps, comtradr:::ct_process_response,
+                        verbose = verbose, tidy_cols = TRUE, bulk = FALSE)
+
+  if (length(results) == 1) return(results[[1]])
+
+  has_data <- !purrr::map_lgl(results, \(x) identical(names(x), "count"))
+  if (!any(has_data)) return(data.frame(count = 0))
+
+  result <- dplyr::bind_rows(results[has_data])
+  attributes(result)$url <- purrr::map_chr(resps[has_data], \(x) x$url)
+  attributes(result)$time <- Sys.time()
+  result
 }

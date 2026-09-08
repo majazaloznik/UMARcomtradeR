@@ -40,7 +40,7 @@ reporter_by_world_w_cassifications <- function(start_date = '2011',
   }
 
   if(!is.null(results)){
-    results <- results %>%
+    results <- results  |>
       dplyr::select(period, reporter_code, reporter_iso, reporter_desc,
                     flow_code, flow_desc, partner_code, partner_iso, partner_desc,
                     classification_code, cmd_code, cmd_desc, aggr_level,
@@ -97,7 +97,7 @@ full_single_country <- function(reporter = "SVN", start_date = '2011',
   }
 
   if(!is.null(results)){
-  results <- results %>%
+  results <- results  |>
     dplyr::select(period, reporter_code, reporter_iso, reporter_desc,
                   flow_code, flow_desc, partner_code, partner_iso, partner_desc,
                   classification_code, cmd_code, cmd_desc, aggr_level,
@@ -151,7 +151,7 @@ reporter_by_partner_total <- function(start_date = '2011',
   }
 
   if(!is.null(results)){
-    results <- results %>%
+    results <- results  |>
       dplyr::select(period, reporter_code, reporter_iso, reporter_desc,
                     flow_code, flow_desc, partner_code, partner_iso, partner_desc,
                     classification_code, cmd_code, cmd_desc, aggr_level,
