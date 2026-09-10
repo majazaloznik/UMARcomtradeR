@@ -9,7 +9,8 @@ fetch_by_commodity(
   start_date = "2011",
   end_date = "2022",
   cmd = "S4",
-  agg_l = 3
+  agg_l = 3,
+  cmd_chunk_size = 150
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ fetch_by_commodity(
 \item{cmd}{commodity classification}
 
 \item{agg_l}{aggregation level}
+
+\item{cmd_chunk_size}{integer chunk size to stop from hitting API limit on url lenthg (2000chars)}
 }
 \value{
 fetched data or NULL

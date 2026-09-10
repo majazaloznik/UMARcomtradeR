@@ -1,7 +1,7 @@
 Package: UMARcomtradeR
 Type: Package
 Title: Helper functions for getting stuff off comtrade
-Version: 0.2.0
+Version: 0.2.1
 Author: mz
 Maintainer: The package maintainer <maja.zaloznik@gmail.com>
 Description: This is a poorly documented package not meant for wider use..
