@@ -18,46 +18,50 @@
 #' @param end_date character value od end year
 #' @param cmd commodity classification
 #' @param agg_l aggregation level
-#'
+#' @param cmd_chunk_size integer chunk size to stop from hitting API limit on url lenthg (2000chars)
 #' @return fetched data or NULL
 #' @export
 #'
-fetch_by_commodity <- function(chunk, start_date = '2011', end_date = '2022', cmd = "S4", agg_l = 3) {
+fetch_by_commodity <- function(chunk, start_date = '2011', end_date = '2022',
+                               cmd = "S4", agg_l = 3, cmd_chunk_size = 150) {
   max_retries <- 3
-  for (i in 1:max_retries) {
-    # Try making the API request
-    print(paste(chunk, "- attempt", i))
-    try_result <- try({
-      data <- comtradr::ct_get_data(
-        type = 'goods',
-        commodity_classification = cmd,
-        commodity_code = get_commodity_codes(cmd, agg_l),
-        reporter = chunk,
-        partner = 'World',
-        start_date = start_date,
-        end_date = end_date,
-        flow_direction = c('import', 'export'),
-        verbose = TRUE
-      )
-      if (is.data.frame(data) && ncol(data) == 1 && nrow(data) == 1 && data[1, 1] == 0) {
-        data <- NULL
-      }
-      list(data = data, failed_chunk = NULL) # successful retrieval
-    }, silent = TRUE)
+  cmd_codes <- get_commodity_codes(cmd, agg_l)
+  cmd_chunks <- split(cmd_codes, ceiling(seq_along(cmd_codes) / cmd_chunk_size))
 
-    # If successful, break out of the loop
-    if (!inherits(try_result, "try-error")) {
-      return(try_result)
+  fetch_one_cmd_chunk <- function(codes) {
+    for (i in 1:max_retries) {
+      print(paste(chunk, "- commodity batch of", length(codes), "codes - attempt", i))
+      try_result <- try({
+        data <- comtradr::ct_get_data(
+          type = 'goods',
+          commodity_classification = cmd,
+          commodity_code = codes,
+          reporter = chunk,
+          partner = 'World',
+          start_date = start_date,
+          end_date = end_date,
+          flow_direction = c('import', 'export'),
+          verbose = TRUE
+        )
+        if (is.data.frame(data) && ncol(data) == 1 && nrow(data) == 1 && data[1, 1] == 0) {
+          data <- NULL
+        }
+        data
+      }, silent = TRUE)
+      if (!inherits(try_result, "try-error")) return(try_result)
+      Sys.sleep(5)
     }
-
-    # If not successful, wait before retrying
-    Sys.sleep(5)
+    NULL
   }
-  # If all retries fail, return NULL or stop with an error message
-  warning(paste("Failed to fetch data for chunk:", paste(chunk, collapse = ",")))
-  return(list(data = NULL, failed_chunk = chunk))
-}
 
+  results <- purrr::map(cmd_chunks, fetch_one_cmd_chunk)
+
+  ok <- !purrr::map_lgl(results, is.null)
+  data <- if (any(ok)) do.call(rbind, results[ok]) else NULL
+  failed_chunk <- if (!all(ok)) chunk else NULL
+
+  list(data = data, failed_chunk = failed_chunk)
+}
 
 #' Fetch trade flows by partner country
 #'
